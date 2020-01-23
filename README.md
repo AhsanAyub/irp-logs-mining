@@ -8,3 +8,7 @@ The following are the members of this project:
 * Md. Ahsan Ayub (Email: mayub42@students.tntech.edu)
 * Steven M. Smith (Email: smsmith23@students.tntech.edu)
 * Nathan A. Martindale (Email: namartinda42@students.tntech.edu)
+
+## Acknowledgement
+
+We would like to thank the researchers of [NECSTLab, DEIB - Politecnico di Milano](http://shieldfs.necst.it) to provide us with the datasets that we are going to use on this project. Their research work can be found here: [SheildFS 2016](https://dl.acm.org/doi/pdf/10.1145/2991079.2991110)
