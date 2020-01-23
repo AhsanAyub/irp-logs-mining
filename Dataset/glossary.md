@@ -1,0 +1,28 @@
+## Dataset Features
+
+There are two types of I/O Request Packet (IRP) logs used for this project: (1) Benign and (2) Ransomware (or malicious). The following are the features fields -
+
+* Operation (Categorical / String)
+* Sequence Number (Hex)
+* Pre-operation Time (Timestamp)
+* Post-operation Time (Timestamp)
+* PID (Numerical)
+* ThreadID (Numerical)
+* ParentID (Numerical)
+* Process Name (String)
+* Major Operation Type (Categorical / String)
+* IRP Flag (Hex)
+* Device Object (Hex)
+* File Object (Hex)
+* Transaction (Hex)
+* Status (Hex)
+* Inform (Hex)
+* Arg 1 (Hex)
+* Arg 2 (Hex)
+* Arg 3 (Hex)
+* Arg 4 (Hex)
+* Arg 5 (Hex)
+* Arg 6 (Hex)
+* Buffer Length (Numeric)
+* Entropy (Numeric)
+* File Name (String)
