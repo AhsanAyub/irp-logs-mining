@@ -105,7 +105,7 @@ def createList(data, family_id, class_id):
     
 
 # Scanning all the file names
-os.chdir("benign-irp-logs/machine_11")
+os.chdir("benign-irp-logs/machine_1")
 all_filenames = [i for i in glob.glob('*')]
 all_filenames = sorted(all_filenames)
 
