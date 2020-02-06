@@ -129,7 +129,7 @@ column_names =  [
                     "class" #binary
                 ]
 
-for i in range(10,15):
+for i in range(40,42):
     
     # Dataframe for processed dataset
     master_data = pd.DataFrame(columns=column_names)
