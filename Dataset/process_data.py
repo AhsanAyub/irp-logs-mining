@@ -202,9 +202,9 @@ def createList(data, family_id, class_id):
     
 
 # Scanning all the file names
-os.chdir("Dataset/benign-irp-logs/machine_1")
-all_filenames = [i for i in glob.glob('*')]
-all_filenames = sorted(all_filenames)
+os.chdir("/home/tntech.edu/mayub42/research/irp-logs-mining/Dataset/")#/benign-irp-logs/machine_11")
+#all_filenames = [i for i in glob.glob('*')]
+#all_filenames = sorted(all_filenames)
 
 # Initializing the dataframe to accumulate and process the datasets
 class_val = 0    # 0 for benign and 1 for malicious
@@ -228,27 +228,31 @@ column_names =  [
                     "class" #binary
                 ]
 
-for file_name in all_filenames:
-    # Dataframe for processed dataset
-    master_data = pd.DataFrame(columns=column_names)
+#for file_name in all_filenames:
+
+file_name = "../../1b95ab402c44763b5f91fd976090e1d67759c7e0b7ff3a7974a1e5a5e26ac4a3"
+
+# Dataframe for processed dataset
+master_data = pd.DataFrame(columns=column_names)
+
+# Importing the dataset
+dataset = pd.read_csv(file_name, sep = '\t')
+dataset = dataset.drop(dataset.index[0])
+dataset = dataset.rename(columns={x:y for x,y in zip(dataset.columns,range(0,len(dataset.columns)))})    # Remaining column names w/ numerics
+print(dataset.head())
     
-    # Importing the dataset
-    dataset = pd.read_csv(file_name, sep = '\t')
-    dataset = dataset.rename(columns={x:y for x,y in zip(dataset.columns,range(0,len(dataset.columns)))})    # Remaining column names w/ numerics
-    print(dataset.head())
+#localPrintFlag = 1 # Just a flag to visualize the progress of the following loop
+
+# Loop to iterate through the imported dataset row wise and populate the dataframe
+for data in dataset.iterrows():
+    temp_master_data = createList(data, family_id, class_val) # Processed row for the dataframe
+    master_data = master_data.append(pd.Series(temp_master_data, index = column_names), ignore_index=True)
         
-    localPrintFlag = 1 # Just a flag to visualize the progress of the following loop
+    # Just for visualization
+    #print (localPrintFlag)
+    #localPrintFlag = localPrintFlag + 1
     
-    # Loop to iterate through the imported dataset row wise and populate the dataframe
-    for data in dataset.iterrows():
-        temp_master_data = createList(data, family_id, class_val) # Processed row for the dataframe
-        master_data = master_data.append(pd.Series(temp_master_data, index = column_names), ignore_index=True)
-            
-        # Just for visualization
-        print (localPrintFlag)
-        localPrintFlag = localPrintFlag + 1
-        
-    # Printing the dataframe
-    print(master_data.head())
-    # Convert the data into csv
-    pd.DataFrame(master_data).to_csv(file_name + '_processed.csv')
+# Printing the dataframe
+print(master_data.head())
+# Convert the data into csv
+pd.DataFrame(master_data).to_csv(file_name + '_processed.csv')
