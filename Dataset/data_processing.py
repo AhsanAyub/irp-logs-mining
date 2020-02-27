@@ -59,7 +59,7 @@ def generateStringForIRPFlags(x): # NPSY
         else:
             val += '0:'
             
-        if(x[2] != '-'): # Y flag
+        if(x[3] != '-'): # Y flag
             val += '1'
         else:
             val += '0'
@@ -225,7 +225,7 @@ if __name__ == '__main__':
     pd.DataFrame(processed_dataset).to_csv("1b95ab402c44763b5f91fd976090e1d67759c7e0b7ff3a7974a1e5a5e26ac4a3_processed.csv")
     
     # Generate aggregated dataframe
-    processed_dataset = aggregator.aggegateData(processed_dataset)
+    processed_aggegate_dataset = aggregator.aggegateData(processed_dataset)
     
     # Dump aggregated dataframe
-    pd.DataFrame(processed_dataset).to_csv("1b95ab402c44763b5f91fd976090e1d67759c7e0b7ff3a7974a1e5a5e26ac4a3_processed_aggregated.csv")
+    pd.DataFrame(processed_aggegate_dataset).to_csv("1b95ab402c44763b5f91fd976090e1d67759c7e0b7ff3a7974a1e5a5e26ac4a3_processed_aggregated.csv")
