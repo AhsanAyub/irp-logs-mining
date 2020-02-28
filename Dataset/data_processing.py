@@ -218,14 +218,17 @@ def main(raw_dataset):
 
 if __name__ == '__main__':
     
+    # File Name for the csv file
+    file_name = "1b95ab402c44763b5f91fd976090e1d67759c7e0b7ff3a7974a1e5a5e26ac4a3"
+    
     # Initialize a process dataframe
-    processed_dataset = main(pd.read_csv("../../1b95ab402c44763b5f91fd976090e1d67759c7e0b7ff3a7974a1e5a5e26ac4a3", sep = '\t'))
+    processed_dataset = main(pd.read_csv("../../" + str(file_name), sep = '\t'))
     
     # Dump processed dataset
-    pd.DataFrame(processed_dataset).to_csv("1b95ab402c44763b5f91fd976090e1d67759c7e0b7ff3a7974a1e5a5e26ac4a3_processed.csv")
+    pd.DataFrame(processed_dataset).to_csv(str(file_name) + "_processed.csv")
     
     # Generate aggregated dataframe
     processed_aggegate_dataset = aggregator.aggegateData(processed_dataset)
     
     # Dump aggregated dataframe
-    pd.DataFrame(processed_aggegate_dataset).to_csv("1b95ab402c44763b5f91fd976090e1d67759c7e0b7ff3a7974a1e5a5e26ac4a3_processed_aggregated.csv")
+    pd.DataFrame(processed_aggegate_dataset).to_csv(str(file_name) + "_processed_aggregated.csv")

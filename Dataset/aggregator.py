@@ -59,10 +59,31 @@ Defination of the processed dataframe
     maxEntropy - Max value fom all the appeared items in entropy
     minEntropy - Min value fom all the appeared items in entropy
     stdEntropy - Standard Deviation of all the appeared items in entropy
+    file_name_seq_items - Sequence of file_names items
     numFileName - Number of unique File Names
+    totalFileName - Size of the all the accessed files 
+    doc_files_count - Number of files' interaction in documents folder
     family_id - Family ID of the Ransomware Family
     class - Benign and ransomware process would be denoted as 0 and 1 respectively
 '''
+
+# Return the count of the number of times the files are accessed in the Document or Doc Files folder
+def number_of_doc_files_accessed(file_names):
+    doc_files_count = 0
+    
+    if(len(file_names) > 0):    
+        for file_name in file_names:
+            file_name = str(file_name)
+            if(file_name.find("Doc file") != -1 or (file_name.find("Documents") != -1)):
+                doc_files_count += 1
+            else:
+                continue
+    
+    return doc_files_count
+
+# Flag if the doc_files_count is more than the mean value
+def doc_files_count_flag(val, mean):
+    return (val >= mean) if 1 else 0
 
 # Return the dataframe aggregated from the dataset grouped with process id and process name
 def aggegateData(dataset):
@@ -118,7 +139,11 @@ def aggegateData(dataset):
         temp.append(item[1]['entropy'].max())                       # maxEntropy
         temp.append(item[1]['entropy'].min())                       # minEntropy
         temp.append(item[1]['entropy'].std())                       # stdEntropy
+        temp.append(item[1]['file_name'].tolist())                  # file_name_seq_items
         temp.append(item[1]['file_name'].unique().size)             # numFileName
+        temp.append(len(item[1]['file_name']))                      # totalFileName
+        temp.append(number_of_doc_files_accessed(item[1]['file_name'].tolist()))     # doc_files_count
+        temp.append(0)                                              # doc_files_flag
         temp.append(0)                                              # family_id
         temp.append(0)                                              # class
         processDataList.append(temp)
@@ -134,11 +159,12 @@ def aggegateData(dataset):
             'numArg2', 'numArg3', 'numArg4', 'numArg5', 'numArg6', 'numBufferLength',
             'sumBufferLength', 'meanBufferLength', 'maxBufferLength', 'minBufferLength',
             'stdBufferLength', 'numEntropy', 'sumEntropy', 'meanEntropy', 'maxEntropy',
-            'minEntropy', 'stdEntropy', 'numFileName', 'family_id', 'class']
+            'minEntropy', 'stdEntropy', 'file_name_seq_items', 'numFileName',
+            'totalFileName', 'doc_files_count', 'doc_files_flag', 'family_id', 'class']
     
-    #df = pd.DataFrame(processDataList, columns = cols)
-    #del processDataList, cols, temp
-    #return df
-    return pd.DataFrame(processDataList, columns = cols)
-
-#df = aggegateData(dataset)
+    processed_data = pd.DataFrame(processDataList, columns = cols)
+    del processDataList
+    doc_files_count_mean = round(processed_data['doc_files_count'].mean())
+    processed_data['doc_files_flag'] = [doc_files_count_flag(doc_files_count,doc_files_count_mean)
+                                        for doc_files_count in processed_data['doc_files_count']]
+    return processed_data
