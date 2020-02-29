@@ -20,26 +20,8 @@ os.chdir("research/irp-logs-mining/Dataset/benign-irp-logs/machine_7")
 all_filenames = [i for i in glob.glob('*')]
 all_filenames = sorted(all_filenames)'''
 
-# The following are the column names to be used for the processed dataset
-column_names =  [
-                    "operation_irp", "operation_fsf", "operation_fio", #categorical / string -> int as flags
-                    "sequence_number", #hex / string -> int
-                    "pre_operation_time", "post_operation_time", #timestamp -> float
-                    "operation_elapsed", #float
-                    "process_id", "thread_id", "parent_id", #numerical
-                    "process_name", #string
-                    "major_operation_type", "minor_operation_type", #categorical / string
-                    "irp_flag", #hex / string -> int
-                    "irp_nocache", "irp_paging_io", "irp_synchoronous_api", "irp_synchoronous_paging_io", #flag values
-                    "device_object", "file_object", "transaction", "status", "inform", #hex / string -> int
-                    "arg1", "arg2", "arg3", "arg4", "arg5", "arg6", # hex / string -> int
-                    "buffer_length", "entropy", #numerical
-                    "file_name", #string
-                    "family_id", #numerical / multiclass
-                    "class" #binary
-                ]
-
-def generateStringForIRPFlags(x): # NPSY
+# NPSY flags
+def generateStringForIRPFlags(x):
     val = "0:0:0:0"
     if(len(x) != 4):
         return val
@@ -66,7 +48,27 @@ def generateStringForIRPFlags(x): # NPSY
         
         return val
 
+
 def main(raw_dataset):
+    # The following are the column names to be used for the processed dataset
+    column_names =  [
+                        "operation_irp", "operation_fsf", "operation_fio", #categorical / string -> int as flags
+                        "sequence_number", #hex / string -> int
+                        "pre_operation_time", "post_operation_time", #timestamp -> float
+                        "operation_elapsed", #float
+                        "process_id", "thread_id", "parent_id", #numerical
+                        "process_name", #string
+                        "major_operation_type", "minor_operation_type", #categorical / string
+                        "irp_flag", #hex / string -> int
+                        "irp_nocache", "irp_paging_io", "irp_synchoronous_api", "irp_synchoronous_paging_io", #flag values
+                        "device_object", "file_object", "transaction", "status", "inform", #hex / string -> int
+                        "arg1", "arg2", "arg3", "arg4", "arg5", "arg6", # hex / string -> int
+                        "buffer_length", "entropy", #numerical
+                        "file_name", #string
+                        "family_id", #numerical / multiclass
+                        "class" #binary
+                    ]
+    
     raw_dataset = raw_dataset.drop(raw_dataset.index[0]) # Removing the first row    
     raw_dataset.columns = raw_dataset.columns.str.strip()
     
@@ -100,7 +102,11 @@ def main(raw_dataset):
     raw_dataset['PPID'] = raw_dataset['PPID'].apply(str)
     raw_dataset['PPID'] = raw_dataset['PPID'].str.strip()
     raw_dataset['PPID'] = raw_dataset['PPID'].str.replace('nan', '-1') # nan and -1 does not represent anything
-    raw_dataset['parent_id'] = raw_dataset['PPID'].astype('int32')
+    try:
+        raw_dataset['parent_id'] = raw_dataset['PPID'].astype('int32')
+    except:
+        raw_dataset['parent_id'] = raw_dataset['PPID'].astype(float)
+        raw_dataset['parent_id'] = raw_dataset['parent_id'].astype('int32')
     raw_dataset = raw_dataset.drop('PPID', axis=1)
     
     # Process ID and Thread ID
@@ -219,16 +225,19 @@ def main(raw_dataset):
 if __name__ == '__main__':
     
     # File Name for the csv file
-    file_name = "1b95ab402c44763b5f91fd976090e1d67759c7e0b7ff3a7974a1e5a5e26ac4a3"
+    file_name = "00ce22ce923e246990e43289b8b5b8191cbfc28dbee6d30b66226df0aa14b7bd"
     
     # Initialize a process dataframe
-    processed_dataset = main(pd.read_csv("../../" + str(file_name), sep = '\t'))
-    
-    # Dump processed dataset
-    pd.DataFrame(processed_dataset).to_csv(str(file_name) + "_processed.csv")
+    processed_dataset = main(pd.read_csv("../../ransomware-lrp-logs/" + str(file_name), sep = '\t'))
+    print("Data processing is done.")
     
     # Generate aggregated dataframe
     processed_aggegate_dataset = aggregator.aggegateData(processed_dataset)
+    print("Aggegating the processed dataset is also done.")
+    
+    # Dump processed dataset
+    # processed_dataset.to_csv("./ransomware-irp-logs/" + str(file_name) + "_processed.csv.gz", compression='gzip')
+    processed_dataset.to_pickle("./ransomware-irp-logs/" + str(file_name) + "_processed.pkl.gz", compression='gzip')
     
     # Dump aggregated dataframe
-    pd.DataFrame(processed_aggegate_dataset).to_csv(str(file_name) + "_processed_aggregated.csv")
+    processed_aggegate_dataset.to_csv("./ransomware-irp-logs/" + str(file_name) + "_processed_aggregated.csv.gz", compression='gzip')

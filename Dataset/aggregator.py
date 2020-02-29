@@ -83,7 +83,10 @@ def number_of_doc_files_accessed(file_names):
 
 # Flag if the doc_files_count is more than the mean value
 def doc_files_count_flag(val, mean):
-    return (val >= mean) if 1 else 0
+    if (val >= mean):
+        return 1
+    else:
+        return 0
 
 # Return the dataframe aggregated from the dataset grouped with process id and process name
 def aggegateData(dataset):
