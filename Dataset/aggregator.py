@@ -83,7 +83,9 @@ def number_of_doc_files_accessed(file_names):
 
 # Flag if the doc_files_count is more than the mean value
 def doc_files_count_flag(val, mean):
-    if (val >= mean):
+    if (mean == 0):
+        return 0
+    elif (val >= mean):
         return 1
     else:
         return 0
@@ -170,4 +172,5 @@ def aggegateData(dataset):
     doc_files_count_mean = round(processed_data['doc_files_count'].mean())
     processed_data['doc_files_flag'] = [doc_files_count_flag(doc_files_count,doc_files_count_mean)
                                         for doc_files_count in processed_data['doc_files_count']]
+    
     return processed_data
