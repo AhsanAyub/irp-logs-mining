@@ -123,7 +123,7 @@ def benign_dataset_feature_space_exploration(dataset, cols):
         
 if __name__ == '__main__':
     pwd = os.getcwd()
-    flag = 0    # 0 for benign and 1 for ransomware
+    flag = 1    # 0 for benign and 1 for ransomware
     
     if (flag == 0):    # Benign datasets' behavior analysis
         os.chdir(pwd)
@@ -194,9 +194,15 @@ if __name__ == '__main__':
                 try:
                     aggegated_dataset = pd.read_csv(filename, compression='gzip', header=0, sep=',', quotechar='"')
                 except:
-                    continue
+                    try:
+                        aggegated_dataset = pd.read_pickle(filename, compression='gzip')
+                    except:
+                        continue
                 
-            aggegated_dataset = aggegated_dataset.drop(['Unnamed: 0'], axis=1)
+            try:
+                aggegated_dataset = aggegated_dataset.drop(['Unnamed: 0'], axis=1)
+            except:
+                print("No need to drop the column")
             print(aggegated_dataset.head())
         
             # Segragating flagged and non flagged dataframes
