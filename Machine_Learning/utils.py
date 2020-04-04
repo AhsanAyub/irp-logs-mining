@@ -130,6 +130,19 @@ def processDataset(dataset):
                                                              'minor_operation_type', 'irp_flag',
                                                              'transaction', 'status'], drop_first=True)
 
+
+def getRansomwareFiles():
+    """ Return all the ransomware files """
+    
+    try:
+        all_file_names = [i for i in glob.glob(str(os.getcwd()) + '/Dataset/ransomware-irp-logs/*_labeled.*')]
+        all_file_names = sorted(all_file_names)
+        
+        return all_file_names
+    
+    except:
+        print("Ransomware files could not be read")
+        return
     
 def getProcessedDataset(ransomware_file_path):
     """
