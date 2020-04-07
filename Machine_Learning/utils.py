@@ -155,7 +155,9 @@ def getProcessedDataset(ransomware_file_path):
     dataset = pd.concat([getBenignDataset(), getRansomwareDataset(ransomware_file_path)])
     Y_class = dataset.iloc[:, -1].values
     Y_family = dataset['family_id']
+    X = processDataset(dataset)
+    X = X.iloc[:,:].values
     
-    return processDataset(dataset), Y_class, Y_family
+    return X, Y_class, Y_family
     
 #dataset, Y_class, Y_family = getProcessedDataset("/Users/ahsanayub/Documents/School Work/CSC 6220/irp-logs-mining/Dataset/ransomware-irp-logs/0bba707dc1545da8d7b7b74201a96097e267a345b7de996ea4d629af27ee4f0f_processed_labeled.pkl.gz")
