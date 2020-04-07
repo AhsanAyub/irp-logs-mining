@@ -101,7 +101,8 @@ def main(raw_dataset):
     # Parent ID
     raw_dataset['PPID'] = raw_dataset['PPID'].apply(str)
     raw_dataset['PPID'] = raw_dataset['PPID'].str.strip()
-    raw_dataset['PPID'] = raw_dataset['PPID'].str.replace('nan', '-1') # nan and -1 does not represent anything
+    raw_dataset['PPID'] = raw_dataset['PPID'].fillna(np.NaN) # Missing Value
+    raw_dataset['PPID'] = raw_dataset['PPID'].str.replace('None', '-1') # nan and -1 does not represent anything
     try:
         raw_dataset['parent_id'] = raw_dataset['PPID'].astype('int32')
     except:
@@ -113,9 +114,15 @@ def main(raw_dataset):
     raw_dataset['Process.Thrd'] = raw_dataset['Process.Thrd'].apply(str)
     raw_dataset['Process.Thrd'] = raw_dataset['Process.Thrd'].str.strip()
     raw_dataset[['process_id', 'thread_id']] = raw_dataset['Process.Thrd'].str.split('.',expand=True)
-    raw_dataset['process_id'] = raw_dataset['process_id'].astype('int32')
-    raw_dataset['thread_id'] = raw_dataset['process_id'].astype('int32')
     raw_dataset = raw_dataset.drop('Process.Thrd', axis=1)
+    
+    raw_dataset['process_id'] = raw_dataset['process_id'].fillna(np.NaN) # Missing Value
+    raw_dataset['process_id'] = raw_dataset['process_id'].str.replace('None', '-1') # nan and -1 does not represent anything
+    raw_dataset['process_id'] = raw_dataset['process_id'].astype('int32')
+    
+    raw_dataset['thread_id'] = raw_dataset['thread_id'].fillna(np.NaN) # Missing Value
+    raw_dataset['thread_id'] = raw_dataset['thread_id'].str.replace('None', '-1') # nan and -1 does not represent anything
+    raw_dataset['thread_id'] = raw_dataset['thread_id'].astype('int32')
     
     # Process Name
     raw_dataset['Process Name'] = raw_dataset['Process Name'].str.strip()
@@ -132,7 +139,9 @@ def main(raw_dataset):
     raw_dataset['IrpFlags'] = raw_dataset['IrpFlags'].str.strip()
     raw_dataset[['irp_flag', 'temp']] = raw_dataset['IrpFlags'].str.split(' ',expand=True)
     raw_dataset['irp_flag'] = raw_dataset['irp_flag'].apply(str)
+    raw_dataset['irp_flag'] = raw_dataset['irp_flag'].fillna(np.NaN) # Missing Value
     raw_dataset['irp_flag'] = raw_dataset['irp_flag'].str.replace('nan', '-0x1') # nan and -1 does not represent anything
+    raw_dataset['irp_flag'] = raw_dataset['irp_flag'].str.replace('None', '-0x1') # None and -1 does not represent anything
     raw_dataset['irp_flag'] = raw_dataset['irp_flag'].apply(int, base=16)
     
     # Four Distinct IRP Flags - NPSY
@@ -157,6 +166,8 @@ def main(raw_dataset):
     raw_dataset['status:inform'] = raw_dataset['status:inform'].apply(str)
     raw_dataset['status:inform'] = raw_dataset['status:inform'].str.strip()
     raw_dataset[['status', 'inform']] = raw_dataset['status:inform'].str.split(':',expand=True)
+    raw_dataset['status'] = raw_dataset['status'].fillna(np.NaN) # Missing Value
+    raw_dataset['status'] = raw_dataset['status'].str.replace('None', '-0x1') # None and -1 does not represent anything
     raw_dataset['status'] = raw_dataset['status'].str.replace('nan', '-0x1') # nan and -1 does not represent anything
     raw_dataset['status'] = raw_dataset['status'].apply(int, base=16) # Convert hex to int
     raw_dataset = raw_dataset.drop('status:inform', axis=1)
@@ -178,14 +189,18 @@ def main(raw_dataset):
     # Buffer Length
     raw_dataset['BufferLength'] = raw_dataset['BufferLength'].apply(str)
     raw_dataset['BufferLength'] = raw_dataset['BufferLength'].str.strip()
-    raw_dataset['BufferLength'] = raw_dataset['BufferLength'].str.replace('nan', '-1') # nan and -1 does not represent anything
+    raw_dataset['BufferLength'] = raw_dataset['BufferLength'].fillna(np.NaN) # Missing Value
+    raw_dataset['BufferLength'] = raw_dataset['BufferLength'].str.replace('None', '0') # None and 0 does not represent anything
+    raw_dataset['BufferLength'] = raw_dataset['BufferLength'].str.replace('nan', '0') # nan and 0 does not represent anything'''
     raw_dataset['buffer_length'] = raw_dataset['BufferLength'].astype(float)
     raw_dataset = raw_dataset.drop('BufferLength', axis=1)
     
     # Entropy
     raw_dataset['Entropy'] = raw_dataset['Entropy'].apply(str)
     raw_dataset['Entropy'] = raw_dataset['Entropy'].str.strip()
-    raw_dataset['Entropy'] = raw_dataset['Entropy'].str.replace('nan', '-1') # nan and -1 does not represent anything
+    raw_dataset['Entropy'] = raw_dataset['Entropy'].fillna(np.NaN) # Missing Value
+    raw_dataset['Entropy'] = raw_dataset['Entropy'].str.replace('None', '0') # None and 0 does not represent anything
+    raw_dataset['Entropy'] = raw_dataset['Entropy'].str.replace('nan', '0') # nan and 0 does not represent anything
     raw_dataset['entropy'] = raw_dataset['Entropy'].astype(float)
     raw_dataset = raw_dataset.drop('Entropy', axis=1)
     
@@ -225,10 +240,11 @@ def main(raw_dataset):
 if __name__ == '__main__':
     
     # File Name for the csv file
-    file_name = "00ce22ce923e246990e43289b8b5b8191cbfc28dbee6d30b66226df0aa14b7bd"
+    file_name = '1cb4b63f27807db6aa177cde067976818fa4d98324d5c7e6534923bcf8016529'
     
     # Initialize a process dataframe
-    processed_dataset = main(pd.read_csv("../../ransomware-lrp-logs/" + str(file_name), sep = '\t'))
+    #processed_dataset = main(pd.read_csv('../../ransomware-lrp-logs/' + str(file_name), engine='python', sep = '\t'))
+    processed_dataset = main(pd.read_csv(str(file_name), engine='python', sep = '\t'))
     print("Data processing is done.")
     
     # Generate aggregated dataframe
