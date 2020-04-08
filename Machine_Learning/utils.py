@@ -122,13 +122,15 @@ def processDataset(dataset):
     dataset['irp_flag'] = dataset['irp_flag'].apply(hex)
     
     # Combine two colums together -> process id and process name
-    dataset['process_id-process_name'] = dataset['process_id'].astype(str) + '_' + dataset['process_name']
+    #dataset['process_id-process_name'] = dataset['process_id'].astype(str) + '_' + dataset['process_name']
     dataset = dataset.drop(['process_name'], axis = 1)
     
+    """ Removing process names from the dataset; as it seems it works better """
+    
     # One-hot-encode the string features
-    return pd.get_dummies(dataset, columns=['process_id-process_name', 'major_operation_type',
-                                                             'minor_operation_type', 'irp_flag',
-                                                             'transaction', 'status'], drop_first=True)
+    #return pd.get_dummies(dataset, columns=['process_id-process_name', 'major_operation_type',
+    return pd.get_dummies(dataset, columns=['major_operation_type', 'minor_operation_type', 'irp_flag',
+                                            'transaction', 'status'], drop_first=True)
 
 
 def getRansomwareFiles():

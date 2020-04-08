@@ -10,6 +10,7 @@ __status__ = "Prototype"
 import pandas as pd
 import glob
 import os
+import re
 
 # Utility function to find the Process IDs and Process Names that are flagged
 def find_malicious_logs(dataset):
@@ -89,8 +90,15 @@ if __name__ == '__main__':
     all_filenames_processed = [i for i in glob.glob('*_processed.*')]
     all_filenames_processed = sorted(all_filenames_processed)
     
-    file_name_aggregated = all_filenames_aggregated[7]
-    file_name_processed = all_filenames_processed[7]
+    file_name_aggregated = all_filenames_aggregated[0]
+    file_name_processed = all_filenames_processed[0]
+    ransomware_hash = file_name_aggregated.split('_')[0]
+    
+    """all_filenames_labeled = [i for i in glob.glob('*labeled*')]
+    all_filenames_labeled = [filename.split('_')[0] for filename in all_filenames_labeled]
+    
+    if ransomware_hash in all_filenames_labeled:
+        exit(1)"""
     
     try:
         aggegated_dataset = pd.read_csv(file_name_aggregated, compression='zip', header=0, sep=',', quotechar='"')
@@ -111,10 +119,7 @@ if __name__ == '__main__':
     ransomware_hash = file_name_aggregated.split('_')[0]
     labeled_processed_data = set_malicious_logs_labels(processed_dataset, process_ids, process_names, ransomware_hash)
     
-    del aggegated_dataset
-    del processed_dataset
-    del process_ids
-    del process_names
+    del aggegated_dataset, processed_dataset, process_ids, process_names
     
     # Dump processed and label dataset
     labeled_processed_data.to_pickle(str(ransomware_hash) + "_processed_labeled.pkl.gz", compression='gzip')

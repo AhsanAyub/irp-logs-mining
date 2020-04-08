@@ -142,9 +142,9 @@ def mlp_model_eval(X, Y, model, history, ransomware_hash):
     plt.show()
         
     if(len(np.unique(Y))) == 2:
-        fileName = str(ransomware_hash) + '_ANN_Accuracy_over_Epoch_Binary_Classification.eps'
+        fileName = str(ransomware_hash) + '_MLP_Accuracy_over_Epoch_Binary_Classification.eps'
     else:
-        fileName = str(ransomware_hash) + '_ANN_Accuracy_over_Epoch_Multiclass_Classification.eps'
+        fileName = str(ransomware_hash) + '_MLP_Accuracy_over_Epoch_Multiclass_Classification.eps'
     
     # Saving the figure
     myFig.savefig(fileName, format='eps', dpi=1200)
@@ -167,9 +167,9 @@ def mlp_model_eval(X, Y, model, history, ransomware_hash):
     plt.show()
         
     if(len(np.unique(Y))) == 2:
-        fileName = str(ransomware_hash) + '_ANN_Loss_over_Epoch_Binary_Classification.eps'
+        fileName = str(ransomware_hash) + '_MLP_Loss_over_Epoch_Binary_Classification.eps'
     else:
-        fileName = str(ransomware_hash) + '_ANN_Loss_over_Epoch_Multiclass_Classification.eps'
+        fileName = str(ransomware_hash) + '_MLP_Loss_over_Epoch_Multiclass_Classification.eps'
     
     # Saving the figure
     myFig.savefig(fileName, format='eps', dpi=1200)
@@ -197,7 +197,7 @@ def mlp_model_eval(X, Y, model, history, ransomware_hash):
         plt.yticks(fontsize=16)
         plt.show()
         
-        fileName = str(ransomware_hash) + '_ANN_Binary_Classification_ROC.eps'
+        fileName = str(ransomware_hash) + '_MLP_Binary_Classification_ROC.eps'
 
         # Saving the figure
         myFig.savefig(fileName, format='eps', dpi=1200)
@@ -231,7 +231,7 @@ if __name__ == '__main__':
     history = mlp_model_train(X_train, Y_train,
                 0.2, # Validation Split
                 128, # Batch Size
-                100 # Epoch Count
+                10 # Epoch Count
                 )
     '''
     The validation split: (1) will randomly split the data into use for training and testing.
