@@ -10,7 +10,7 @@ __status__ = "Prototype"
 # Import libraries
 import numpy as np
 import matplotlib.pyplot as plt
-import Machine_Learning.utils as utility
+import utils as utility
 import random
 
 # Libraries relevant to performance metrics
@@ -97,7 +97,7 @@ def mlp_model_train(X, Y, val_split, batch_size, epochs_count):
     return history
 
 
-def mlp_model_eval(X, Y, model, history, ransomware_hash):
+def mlp_model_eval(X, Y, model, history, ransomware_family):
     
     """ Evaluate the multilayer perceptron  model or ANN during test time """
     
@@ -130,21 +130,21 @@ def mlp_model_eval(X, Y, model, history, ransomware_hash):
     # Intilization of the figure
     myFig = plt.figure(figsize=[12,10])
 
-    plt.plot(history.history['accuracy'], linestyle = ':',lw = 2, alpha=0.8, color = 'black')
-    plt.plot(history.history['val_accuracy'], linestyle = '--',lw = 2, alpha=0.8, color = 'black')
+    plt.plot(history.history['acc'], linestyle = ':',lw = 2, alpha=0.8, color = 'black')
+    plt.plot(history.history['val_acc'], linestyle = '--',lw = 2, alpha=0.8, color = 'black')
     plt.title('Accuracy over Epoch', fontsize=20, weight='bold')
     plt.ylabel('Accuracy', fontsize=18, weight='bold')
     plt.xlabel('Epoch', fontsize=18, weight='bold')
     plt.legend(['Train', 'Validation'], loc='lower right', fontsize=14)
-    plt.xticks(ticks=range(0, len(history.history['accuracy'])))
+    plt.xticks(ticks=range(0, len(history.history['acc'])))
     
     plt.yticks(fontsize=16)
     plt.show()
         
     if(len(np.unique(Y))) == 2:
-        fileName = str(ransomware_hash) + '_MLP_Accuracy_over_Epoch_Binary_Classification.eps'
+        fileName = str(ransomware_family) + '_MLP_Accuracy_over_Epoch_Binary_Classification.eps'
     else:
-        fileName = str(ransomware_hash) + '_MLP_Accuracy_over_Epoch_Multiclass_Classification.eps'
+        fileName = str(ransomware_family) + '_MLP_Accuracy_over_Epoch_Multiclass_Classification.eps'
     
     # Saving the figure
     myFig.savefig(fileName, format='eps', dpi=1200)
@@ -167,9 +167,9 @@ def mlp_model_eval(X, Y, model, history, ransomware_hash):
     plt.show()
         
     if(len(np.unique(Y))) == 2:
-        fileName = str(ransomware_hash) + '_MLP_Loss_over_Epoch_Binary_Classification.eps'
+        fileName = str(ransomware_family) + '_MLP_Loss_over_Epoch_Binary_Classification.eps'
     else:
-        fileName = str(ransomware_hash) + '_MLP_Loss_over_Epoch_Multiclass_Classification.eps'
+        fileName = str(ransomware_family) + '_MLP_Loss_over_Epoch_Multiclass_Classification.eps'
     
     # Saving the figure
     myFig.savefig(fileName, format='eps', dpi=1200)
@@ -197,7 +197,7 @@ def mlp_model_eval(X, Y, model, history, ransomware_hash):
         plt.yticks(fontsize=16)
         plt.show()
         
-        fileName = str(ransomware_hash) + '_MLP_Binary_Classification_ROC.eps'
+        fileName = str(ransomware_family) + '_MLP_Binary_Classification_ROC.eps'
 
         # Saving the figure
         myFig.savefig(fileName, format='eps', dpi=1200)
@@ -205,24 +205,29 @@ def mlp_model_eval(X, Y, model, history, ransomware_hash):
 
 if __name__ == '__main__':
     
-    # Get rasomware files
-    all_ransomware_files = utility.getRansomwareFiles()
-    ransomware_file = all_ransomware_files[0]
+    # Get all the rasomware family names' paths
+    all_ransomware_families = utility.getRansomwareFamily()
     
-    # First splitting from the f
-    ransomware_hash = ransomware_file.split('/')[-1].split('_')[0]
+    # Get all the rasomware samples' paths for a given ransomware family
+    all_ransomware_files = utility.getRansomwareFiles(all_ransomware_families[-1])
+    ransomware_family = all_ransomware_families[-1].split('/')[-1]  # Extract the family name from the path
+    print(ransomware_family)
+
+    # Extract hashes from all the samples' paths for further usuage
+    #ransomware_hashes = [file.split('/')[-1].split('_')[0] for file in all_ransomware_files]    
     
-    # Get processed dataset (X and Y) for the ransomware dataset
-    ''' X and Y_class will come in as .values from the dataframe '''
-    X, Y_class, Y_family = utility.getProcessedDataset(ransomware_file)
+    X, Y_class, Y_family = utility.getProcessedDataset(all_ransomware_files, _flag = "train")
+    print("Obtained processed dataset")
     
-    # Scale the dataset
     scaler = MinMaxScaler().fit(X)
     X = np.array(scaler.transform(X))
-
-    # Split the dataset into train set (80%) and test set (20%)
+    print("Scaled X instances")
+    
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y_class, test_size = 0.2, random_state = 42, stratify=Y_class)
-    del X, Y_class
+    print("Split the dataset into training (80%) and testing (20%) set")
+    
+    # No longer needed the following
+    del X, Y_class, Y_family
     
     # Building the model
     model = mlp_model(X_train, Y_train)
@@ -231,7 +236,7 @@ if __name__ == '__main__':
     history = mlp_model_train(X_train, Y_train,
                 0.2, # Validation Split
                 128, # Batch Size
-                10 # Epoch Count
+                100 # Epoch Count
                 )
     '''
     The validation split: (1) will randomly split the data into use for training and testing.
@@ -249,6 +254,11 @@ if __name__ == '__main__':
     The more epochs we run, the more the model will improve, up to a certain point.
     '''
     
+    # Removing the X_train and Y_train as no further computation needed
+    del X_train, Y_train
     
     # Evaluation of the model
-    mlp_model_eval(X_test, Y_test, model, history, ransomware_hash)
+    mlp_model_eval(X_test, Y_test, model, history, ransomware_family)
+    
+    # Removing the X_test and Y_test as no further computation needed
+    del X_test, Y_test

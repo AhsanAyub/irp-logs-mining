@@ -85,7 +85,7 @@ def getBenignDataset():
     
 
 def getRansomwareDataset(path):
-    """ Get a file path and return the ransomware dataset """
+    """ Provide a file path and return the ransomware dataset """
     
     compression_type = path.split('.')[-1]
     if (compression_type == 'gz'):
@@ -104,10 +104,8 @@ def getRansomwareDataset(path):
 
 
 def processDataset(dataset):
-    """
-    The function performs processing the dataset that has got records of both benign and
-    ransomware logs. After processing the dataset, it will return the processed dataframe.
-    """
+    """The function performs processing the dataset that has got records of both benign and
+    ransomware logs. After processing the dataset, it will return the processed dataframe."""
     
     # Dropping the columns that are not needed for analysis
     dataset = dataset.drop(['sequence_number', 'device_object', 'file_object', 'file_name', 'inform',
@@ -133,28 +131,51 @@ def processDataset(dataset):
                                             'transaction', 'status'], drop_first=True)
 
 
-def getRansomwareFiles():
-    """ Return all the ransomware files """
+def getRansomwareFiles(path):
+    """ Return all the ransomware files (sorted) from a given path """
     
     try:
-        all_file_names = [i for i in glob.glob(str(os.getcwd()) + '/Dataset/ransomware-irp-logs/*_labeled.*')]
+        all_file_names = [i for i in glob.glob(str(path) + '/*_labeled.*')]
         all_file_names = sorted(all_file_names)
         
         return all_file_names
     
     except:
-        print("Ransomware files could not be read")
+        print("Ransomware samples could not be read")
         return
     
-def getProcessedDataset(ransomware_file_path):
-    """
-    The main function to perform processing the dataset.
+def getRansomwareFamily():
+    """ Return all the ransomware family names (sorted) """
+    
+    try:
+        all_file_names = [i for i in glob.glob(str(os.getcwd()) + '/Dataset/ransomware-irp-logs/*')]
+        all_file_names = sorted(all_file_names)
+        
+        len_all_file_names = len(all_file_names)
+        
+        for i in range(len_all_file_names):
+            if ("Time_Interval_Dataset" in all_file_names[i]):    # Delete the Time Interval Dataset directory
+                all_file_names.pop(i)
+                break
+        
+        return all_file_names
+    
+    except:
+        print("Ransomware family names could not be read")
+        return
+    
+def getProcessedDataset(ransomware_file_paths, _flag):
+    """The main function to perform processing the dataset.
     It will take input a ransomware file path.
     The function will return the processed dataframe in terms of X, Y_class, Y_family
-    after utilizing features of other functions.
-    """
+    after utilizing features of other functions."""
     
-    dataset = pd.concat([getBenignDataset(), getRansomwareDataset(ransomware_file_path)])
+    dataset = pd.concat([getRansomwareDataset(path) for path in ransomware_file_paths])
+    if (_flag == "train"):
+        dataset = pd.concat([getBenignDataset(), dataset])
+    else:
+        print("Benign dataset has not been added to the processed dataset.")
+        
     Y_class = dataset.iloc[:, -1].values
     Y_family = dataset['family_id']
     X = processDataset(dataset)
