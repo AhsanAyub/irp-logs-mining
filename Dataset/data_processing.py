@@ -7,8 +7,8 @@ __email__ = "mayub42@students.tntech.edu"
 __status__ = "Prototype"
 
 # Importing libraries
-'''import os
-import glob'''
+import os
+import glob
 import pandas as pd
 import numpy as np
 from datetime import datetime
@@ -239,21 +239,66 @@ def main(raw_dataset):
 
 if __name__ == '__main__':
     
-    # File Name for the csv file
-    file_name = '1cb4b63f27807db6aa177cde067976818fa4d98324d5c7e6534923bcf8016529'
+    '''all_filenames = [i for i in glob.glob('2*')]
+    all_filenames = sorted(all_filenames)
+    print(all_filenames)'''
+    
+    
+    all_given_files = [i for i in glob.glob('./ransomware-irp-logs-9/*')]
+    all_given_files = sorted(all_given_files)
+    all_given_files_hashes = [filename.split('/')[-1] for filename in all_given_files]
+    all_given_files_hashes = [filename.split('.')[0] for filename in all_given_files_hashes]
+    
+    all_available_files_hashes = [i for i in glob.glob('./ransomware-irp-logs/Time_Interval_Dataset/*')]
+    all_available_files_hashes = [filename.split('/')[-1] for filename in all_available_files_hashes]
+    all_available_files_hashes = [filename.split('.')[0] for filename in all_available_files_hashes]
+    all_available_files_hashes = sorted(all_available_files_hashes)
+    
+    for i in range(len(all_given_files_hashes)):
+        if(all_given_files_hashes[i] in all_available_files_hashes):
+            all_given_files_hashes[i] = 0
+            os.remove(all_given_files[i])
+            all_given_files.pop(i)
+            
+    # File Name for the csv file 
+    #file_name = '02ef81bb120472b87d413516a8ccc8202d9e04d686ebdedbfcd963b6a9673109'
+    i = 1
+    
+    for file_name in all_given_files:
     
     # Initialize a process dataframe
     #processed_dataset = main(pd.read_csv('../../ransomware-lrp-logs/' + str(file_name), engine='python', sep = '\t'))
-    processed_dataset = main(pd.read_csv(str(file_name), engine='python', sep = '\t'))
-    print("Data processing is done.")
     
-    # Generate aggregated dataframe
-    processed_aggegate_dataset = aggregator.aggegateData(processed_dataset)
-    print("Aggegating the processed dataset is also done.")
-    
-    # Dump processed dataset
-    # processed_dataset.to_csv("./ransomware-irp-logs/" + str(file_name) + "_processed.csv.gz", compression='gzip')
-    processed_dataset.to_pickle("./ransomware-irp-logs/" + str(file_name) + "_processed.pkl.gz", compression='gzip')
-    
-    # Dump aggregated dataframe
-    processed_aggegate_dataset.to_csv("./ransomware-irp-logs/" + str(file_name) + "_processed_aggregated.csv.gz", compression='gzip')
+        try:
+            processed_dataset = main(pd.read_csv(str(file_name), engine='python', sep = '\t', compression='gzip'))
+            print("Data processing is done.")
+            
+            # Generate aggregated dataframe
+            processed_aggregate_dataset = aggregator.aggegateData(processed_dataset)
+            print("Aggegating the processed dataset is also done.")
+            
+            file_name_copy = file_name
+            file_name = file_name.split('/')[-1]
+            file_name = file_name.split('.')[0]
+            
+            # Dump processed dataset
+            # processed_dataset.to_csv("./ransomware-irp-logs/" + str(file_name) + "_processed.csv.gz", compression='gzip')
+            processed_dataset.to_pickle("./ransomware-irp-logs/" + str(file_name) + "_processed.pkl.gz", compression='gzip')
+            print("Processed dataset is dumped, shape %s" % str(processed_dataset.shape))
+            
+            # Dump aggregated dataframe
+            processed_aggregate_dataset.to_csv("./ransomware-irp-logs/" + str(file_name) + "_processed_aggregated.csv.gz", compression='gzip')
+            print("Aggregated dataset is dumped, shape %s" % str(processed_aggregate_dataset.shape))
+            
+            del processed_dataset, processed_aggregate_dataset
+            
+            os.remove(file_name_copy)
+            print("%s is removed" % file_name)
+            
+            print(i)
+            i += 1
+
+        except:
+            print(i)
+            i += 1
+            continue
