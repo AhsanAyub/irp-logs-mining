@@ -9,7 +9,7 @@ The research project has been published at the IEEE 21st International Conferenc
 
 ## Acknowledgement
 
-We would like to thank [Andrea Continella, Ph.D.](https://conand.me/) to provide us with the datasets that we have used on this project. The research paper can be found here: [SheildFS 2016](https://dl.acm.org/doi/pdf/10.1145/2991079.2991110)
+We would like to thank [Andrea Continella, Ph.D.](https://conand.me/) to provide us with the datasets that we have used on this project as well as collaborate in our research project. The research paper (Continella _et al._) can be found here: [SheildFS 2016](https://dl.acm.org/doi/pdf/10.1145/2991079.2991110).
 
 
 ### Citing this work
