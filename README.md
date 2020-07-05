@@ -13,7 +13,7 @@ We would like to thank [Andrea Continella, Ph.D.](https://conand.me/) to provide
 
 
 ### Citing this work
-If you use our implementation for academic research, you are highly encouraged to cite [our paper]().
+If you use our implementation for academic research, you are highly encouraged to cite [our paper](https://ahsanayub.github.io/assets/paper/Authors_Copy_An_IO_Request_Packet_(IRP)_Driven_Effective_Ransomware_Detection_Scheme_using_Artificial_Neural_Network.pdf).
 
 ```
 @inproceedings{ayub2020io,
