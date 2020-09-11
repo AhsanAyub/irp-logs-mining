@@ -19,9 +19,9 @@ If you use our implementation for academic research, you are highly encouraged t
 @inproceedings{ayub2020io,
 	title={An I/O Request Packet (IRP) Driven Effective Ransomware Detection Scheme using Artificial Neural Network},
 	author={Ayub, Md Ahsan and Continella, Andrea and Siraj, Ambareen},
-	booktitle={2020 IEEE International Conference on Information Reuse and Integration (IRI)},
+	booktitle={2020 IEEE 21st International Conference on Information Reuse and Integration for Data Science (IRI)},
 	year={2020},
-	pages={1-6},
+	pages={319-324},
 	organization={IEEE}
 }
 ```
